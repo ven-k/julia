@@ -582,8 +582,9 @@ test-%: check-whitespace $(JULIA_BUILD_MODE)
 
 # download target for some hardcoded windows dependencies
 .PHONY: win-extras wine_path
-win-extras: install-p7zip
-	[ -d $(JULIAHOME)/dist-extras ] || mkdir $(JULIAHOME)/dist-extras
+win-extras:
+	@$(MAKE) -C $(BUILDROOT)/deps install-p7zip
+	mkdir -p $(JULIAHOME)/dist-extras
 	cd $(JULIAHOME)/dist-extras && \
 	$(JLDOWNLOAD) https://sourceforge.net/projects/nsis/files/NSIS%203/3.04/nsis-3.04-setup.exe && \
 	$(JLCHECKSUM) nsis-3.04-setup.exe && \
