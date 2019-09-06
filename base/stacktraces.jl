@@ -110,7 +110,8 @@ function frame_importance(frame::StackFrame; fallback=(frame,modroot)->1)
     if frame.linfo isa Core.MethodInstance
         def = frame.linfo.def
         if def isa Method
-            if def.hide_in_stacktrace
+            is_hidden = ccall(:jl_ast_flag_hide_in_stacktrace, Bool, (Any,), def.source)
+            if is_hidden
                 # This overrides the module heuristic information
                 return -1
             end

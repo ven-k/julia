@@ -2648,6 +2648,15 @@ JL_DLLEXPORT jl_code_info_t *jl_uncompress_ast(jl_method_t *m, jl_code_instance_
     return code;
 }
 
+JL_DLLEXPORT uint8_t jl_ast_flag_hide_in_stacktrace(jl_array_t *data)
+{
+    if (jl_is_code_info(data))
+        return ((jl_code_info_t*)data)->hide_in_stacktrace;
+    assert(jl_typeis(data, jl_array_uint8_type));
+    uint8_t flags = ((uint8_t*)data->data)[0];
+    return !!(flags & (1 << 4));
+}
+
 JL_DLLEXPORT uint8_t jl_ast_flag_inferred(jl_array_t *data)
 {
     if (jl_is_code_info(data))
