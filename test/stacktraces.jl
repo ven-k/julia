@@ -168,3 +168,18 @@ end
 @test bt[2].line == 42
 @test bt[2].file === :foo
 end
+
+# hidden frames
+Base.@hide_in_stacktrace function throw_from_hidden_frame()
+    throw(ErrorException("FromHiddenFrame"))
+end
+
+let bt
+    try
+        throw_from_hidden_frame()
+    catch
+        bt = catch_backtrace()
+    end
+    @test stacktrace(bt)[1].func == Symbol("top-level scope")
+end
+

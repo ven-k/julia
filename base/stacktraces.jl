@@ -97,12 +97,12 @@ function hash(frame::StackFrame, h::UInt)
 end
 
 """
-Classify frame according to relevance level
+Classify stack frame according to heuristic importance level
 
 Importance level 0 is intended to be the default minimum which will be shown to
 users in stack traces.
 """
-function frame_importance(frame::StackFrame; fallback=(frame,modroot)->1)
+function frame_importance(frame::StackFrame)
     if frame.from_c
         return -2
     end
@@ -120,8 +120,8 @@ function frame_importance(frame::StackFrame; fallback=(frame,modroot)->1)
             # Top-level thunk ? (TODO: test this!)
             mod = def
         end
-    elseif frame.linfo isa Module
-        mod = frame.linfo  # TODO: Test this
+    elseif frame.linfo isa CodeInfo
+        # mod = frame.linfo  # TODO: Test this
     end
     if mod !== nothing
         modroot = Base.moduleroot(mod)
@@ -130,12 +130,12 @@ function frame_importance(frame::StackFrame; fallback=(frame,modroot)->1)
             return 0
         elseif modroot == Main
             return 3
+        # elseif ???
+            # TODO: How can users customize this? For example can we return 2
+            # for dev'd or unregistered modules?
+            # return 2
         else
-            return fallback(frame, modroot)
-        # TODO: dev'd modules ??
-        #   Can we even detect this in a reasonable way from Base or do we need
-        #   to depend on Pkg?
-        #   return 2
+            return 1
         end
     end
     return 0
