@@ -225,6 +225,10 @@ let exename = `$(Base.julia_cmd()) --startup-file=no --color=no`
         @test expanded == readchomp(addenv(`$exename -e 'println(Base.active_project())'`, "JULIA_PROJECT" => "@foo", "HOME" => homedir()))
     end
 
+    # handling of --temp in --project and JULIA_PROJECT
+    @test occursin(tempdir(), readchomp(`$exename --project=--temp -e 'println(Base.active_project())'`))
+    @test occursin(tempdir(), readchomp(`$exename -e 'println(Base.active_project())'`, "JULIA_PROJECT" => "--temp", "HOME" => homedir()))
+
     # --quiet, --banner
     let p = "print((Base.JLOptions().quiet, Base.JLOptions().banner))"
         @test read(`$exename                   -e $p`, String) == "(0, -1)"

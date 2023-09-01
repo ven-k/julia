@@ -238,7 +238,8 @@ function init_active_project()
     set_active_project(
         project === nothing ? nothing :
         project == "" ? nothing :
-        startswith(project, "@") ? load_path_expand(project) : abspath(expanduser(project))
+        startswith(project, "@") ? load_path_expand(project) :
+        isequal(project, "--temp") ? mktempdir() : abspath(expanduser(project))
     )
 end
 
